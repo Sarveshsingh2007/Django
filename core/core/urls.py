@@ -19,6 +19,9 @@ from django.contrib import admin
 from django.urls import path
 from core.home.views import *
 from core.vege.views import *
+from django.conf.urls.static import static
+from django.conf import settings
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 urlpatterns = [
@@ -26,6 +29,10 @@ urlpatterns = [
     path('', home, name="home"),
 
     path('recipes/', recipes, name="recipes"),
+
+    path('delete-recipe/<int:id>/', delete_recipe, name="delete_recipe"),
+
+    path('update-recipe/<int:id>/', update_recipe, name="update_recipe"),
 
     path('success_page/', success_page, name="success_page"),
     
@@ -35,3 +42,10 @@ urlpatterns = [
 
     path("admin/", admin.site.urls),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root = settings.MEDIA_ROOT)
+    
+urlpatterns += staticfiles_urlpatterns()    
