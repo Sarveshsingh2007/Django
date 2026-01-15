@@ -3,24 +3,95 @@
 
 <div class="container mt-5">
 
-    <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-  <h2>Add Recipe</h2>    
-  <hr>  
-  <div class="mb-3">
-    <label for="exampleInputEmail1" class="form-label">Name</label>
-    <input name="recipe_name" type="text" class="form-control" required>
+  <!-- ADD RECIPE FORM -->
+  <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h2>Add Recipe</h2>
+    <hr>
+
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input name="recipe_name" type="text" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Recipe Description</label>
+      <textarea class="form-control" name="recipe_description" required></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Recipe Image</label>
+      <input name="recipe_image" type="file" class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-success">Add Recipe</button>
+  </form>
+
+  <hr>
+
+  <!-- SEARCH FORM -->
+  <div class="mt-5">
+    <div class="mx-auto col-6">
+      <form method="GET">
+        <h2>Search Food</h2>
+        <div class="mb-3 d-flex align-items-center gap-2">
+          <input
+            name="search"
+            type="text"
+            class="form-control"
+            placeholder="Search food"
+            value="{{ request.GET.search }}"
+          >
+          <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+      </form>
+    </div>
   </div>
-  <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Recipe Description</label>
-    <textarea class="form-control" name="recipe_description" required></textarea>
-  </div>
-  <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Recipe Image</label>
-    <input name="recipe_image" type="file" class="form-control">
-  </div>
-  <button type="submit" class="btn btn-success">Add Recipe</button>
-</form>
+
+  <!-- RECIPES TABLE -->
+  <table class="table mt-5">
+    <thead>
+      <tr>
+        <th>S.no</th>
+        <th>Recipe Name</th>
+        <th>Recipe Description</th>
+        <th>Recipe Image</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <!-- SHOW MESSAGE IF NOTHING FOUND -->
+      {% if recipes|length == 0 %}
+        <tr>
+          <td colspan="5" class="text-center text-danger fw-bold">
+            No recipes found
+          </td>
+        </tr>
+      {% endif %}
+
+      <!-- SHOW RECIPES -->
+      {% for recipe in recipes %}
+      <tr>
+        <th>{{ forloop.counter }}</th>
+        <td>{{ recipe.recipe_name }}</td>
+        <td>{{ recipe.recipe_description }}</td>
+        <td>
+          {% if recipe.recipe_image %}
+            <img src="{{ recipe.recipe_image.url }}" width="100">
+          {% endif %}
+        </td>
+        <td>
+          <a href="/delete-recipe/{{ recipe.id }}/" class="btn btn-danger btn-sm">Delete</a>
+          <hr>
+          <a href="/update-recipe/{{ recipe.id }}/" class="btn btn-primary btn-sm">Update</a>
+        </td>
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
 
 </div>
 
