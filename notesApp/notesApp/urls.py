@@ -16,8 +16,26 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from notes.views import *
 
 urlpatterns = [
+
+    path('', home, name="home"),
+
+    path('add/', add_note, name='add_note'),   
+
+    path('view/', view_notes, name='view_notes'), 
+
+    path('delete/<int:id>/', delete_note, name='delete_note'), 
+
+    path('download/<int:id>/', download_file, name='download_file'),
+
+
     path("admin/", admin.site.urls),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
