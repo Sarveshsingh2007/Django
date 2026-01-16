@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h2 class="mb-4">Welcome to Notes App</h2>
+
+    <a href="{% url 'add_note' %}" class="btn btn-success btn-lg me-3">
+        Add Note
+    </a>
+
+    <a href="{% url 'view_notes' %}" class="btn btn-primary btn-lg">
+        View Notes
+    </a>
+</div>
+{% endblock %}

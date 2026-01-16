@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3 class="mb-4 text-center">All Notes</h3>
+
+<div class="mb-3 text-center">
+    <a href="{% url 'home' %}" class="btn btn-secondary me-2">Home</a>
+    <a href="{% url 'add_note' %}" class="btn btn-success">Add Note</a>
+</div>
+
+<div class="row">
+    {% for note in notes %}
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+
+                <h5 class="card-title">{{ note.title }}</h5>
+                <p class="card-text">{{ note.description }}</p>
+
+                <a href="{{ note.file.url }}" class="btn btn-primary btn-sm" download>Download File</a>
+
+                <!-- DELETE FORM -->
+                <form action="{% url 'delete_note' note.id %}" 
+                      method="POST" 
+                      class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        Delete File
+                    </button>
+                </form>
+
+                <p class="text-muted mt-2 mb-0">
+                    <small>{{ note.created_at }}</small>
+                </p>
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center">No notes available</p>
+    {% endfor %}
+</div>
+{% endblock %}
