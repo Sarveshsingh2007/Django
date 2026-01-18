@@ -10,7 +10,7 @@ def add_note(request):
 
     if request.method == "POST":
         Note.objects.create(
-            subject = request.POST.get('Subject'),
+            subject = request.POST.get('subject'),
             title = request.POST.get('title'),
             description = request.POST.get('description'),  
             file = request.FILES.get('file'),
