@@ -10,28 +10,37 @@
 
 <div class="row">
     {% for note in notes %}
-    <div class="col-md-4">
-        <div class="card mb-4 shadow-sm">
-            <div class="card-body">
-                <h2 class="card-subject">{{note.subject}}</h2>
+    <div class="col-md-4 d-flex">
+        <div class="card note-card mb-4 shadow-sm w-100">
+            <div class="card-body d-flex flex-column">
+
+                <h2 class="card-subject">{{ note.subject }}</h2>
                 <h5 class="card-title">{{ note.title }}</h5>
-                <p class="card-text">{{ note.description }}</p>
 
-                <a href="{{ note.file.url }}" class="btn btn-primary btn-sm" download>Download File</a>
-
-                <!-- DELETE FORM -->
-                <form action="{% url 'delete_note' note.id %}" 
-                      method="POST" 
-                      class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        Delete File
-                    </button>
-                </form>
-
-                <p class="text-muted mt-2 mb-0">
-                    <small>{{ note.created_at }}</small>
+                <p class="card-text">
+                    {{ note.description }}
                 </p>
+
+                <!-- Buttons always at bottom -->
+                <div class="mt-auto">
+                    <a href="{{ note.file.url }}" class="btn btn-primary btn-sm" download>
+                        Download File
+                    </a>
+
+                    <form action="{% url 'delete_note' note.id %}"
+                          method="POST"
+                          class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Delete File
+                        </button>
+                    </form>
+
+                    <p class="text-muted mt-2 mb-0">
+                        <small>{{ note.created_at }}</small>
+
+                    </p>
+                </div>
 
             </div>
         </div>
