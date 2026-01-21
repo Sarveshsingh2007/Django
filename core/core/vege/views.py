@@ -4,8 +4,11 @@ from django.http import HttpRequest
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+
+@login_required(login_url="/login")
+
 def recipes(request):
     if request.method == "POST":
         data = request.POST
@@ -31,11 +34,14 @@ def recipes(request):
 
     return render(request, 'recipes.html', context)
 
+@login_required(login_url="/login")
 def delete_recipe(request, id):
     queryset = Recipe.objects.get(id = id)
     queryset.delete()
     return redirect('/recipes/')
 
+
+@login_required(login_url="/login")
 def update_recipe(request, id):
     queryset = Recipe.objects.get(id = id)
 
