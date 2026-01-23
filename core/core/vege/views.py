@@ -122,6 +122,8 @@ def register_page(request):
 def get_students(request):
     queryset = Student.objects.all()
 
+    ranks = Student.objects.annotate(marks = Sum('studentmarks__marks')).order_by('-marks', '-student_age')
+
     search = request.GET.get('search')
     if search:
         queryset = queryset.filter(
@@ -143,8 +145,10 @@ def get_students(request):
 
     return render(request, 'report/students.html', context)
 
-
+from .seed import generate_report_card
 def see_marks(request, student_id):
     queryset = SubjectMarks.objects.filter(student__student_id__student_id = student_id)
     total_marks = queryset.aggregate(total_marks = Sum('marks'))
+    
     return render(request, 'report/see_marks.html', {'queryset': queryset, 'total_marks': total_marks})
+
