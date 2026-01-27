@@ -2,29 +2,33 @@ from django.shortcuts import render
 from .models import Student
 from attendance.models import Attendance
 from accounts.decorators import student_required
+from django.contrib.auth.decorators import login_required
+from subjects.models import Subject
 
-@student_required
+@login_required
 def student_dashboard(request):
-    student = Student.objects.get(user=request.user)
-
+    student = request.user.student
     subject_data = []
 
     for subject in student.subjects.all():
         total = Attendance.objects.filter(
-            student=student, subject=subject
+            student=student,
+            subject=subject
         ).count()
 
         present = Attendance.objects.filter(
-            student=student, subject=subject, is_present=True
+            student=student,
+            subject=subject,
+            present=True
         ).count()
 
-        percentage = (present / total) * 100 if total > 0 else 0
+        percentage = int((present / total) * 100) if total > 0 else 0
 
         subject_data.append({
             'subject': subject.name,
             'total': total,
             'present': present,
-            'percentage': round(percentage, 2)
+            'percentage': percentage
         })
 
     return render(request, 'students/dashboard.html', {

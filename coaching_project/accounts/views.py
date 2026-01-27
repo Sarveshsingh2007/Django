@@ -1,20 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout, authenticate
 from .models import User
-from teachers.models import Teacher
+from teachers.models import Teacher, TeacherClass
 from subjects.models import Subject
-from django.contrib.auth import logout
-from django.shortcuts import redirect
 from students.models import Student
-from django.contrib.auth import authenticate
 
-
-
-
-from django.shortcuts import render, redirect
-from .models import User
-from teachers.models import Teacher
-from subjects.models import Subject
 
 def teacher_register(request):
     subjects = Subject.objects.all()
@@ -23,8 +13,10 @@ def teacher_register(request):
         username = request.POST['username']
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
-        teaching_class = request.POST['teaching_class']
         subject_id = request.POST['subject']
+
+        # 🔹 MULTIPLE CLASSES
+        class_codes = request.POST.getlist('classes')  # ['11', '12']
 
         # ✅ Password match check
         if password != confirm_password:
@@ -33,11 +25,18 @@ def teacher_register(request):
                 'error': 'Passwords do not match'
             })
 
-        # ✅ Username already exists check
+        # ✅ Username exists check
         if User.objects.filter(username=username).exists():
             return render(request, 'accounts/teacher_register.html', {
                 'subjects': subjects,
                 'error': 'Username already exists. Please choose another one.'
+            })
+
+        # ✅ At least one class selected
+        if not class_codes:
+            return render(request, 'accounts/teacher_register.html', {
+                'subjects': subjects,
+                'error': 'Please select at least one class'
             })
 
         # ✅ Create user
@@ -47,12 +46,16 @@ def teacher_register(request):
             role='teacher'
         )
 
-        # ✅ Create teacher profile
-        Teacher.objects.create(
+        # ✅ Create teacher profile (WITHOUT classes first)
+        teacher = Teacher.objects.create(
             user=user,
-            teaching_class=teaching_class,
             subject_id=subject_id
         )
+
+        # ✅ Assign multiple classes (ManyToMany)
+        for code in class_codes:
+            cls, _ = TeacherClass.objects.get_or_create(code=code)
+            teacher.classes.add(cls)
 
         return redirect('login')
 
@@ -63,42 +66,50 @@ def teacher_register(request):
 
 
 
-
-
 def student_register(request):
     subjects = Subject.objects.all()
 
     if request.method == 'POST':
         username = request.POST['username']
+        class_code = request.POST['class_code']
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
         subject_ids = request.POST.getlist('subjects')
 
-        # ✅ Password match check
+        # Password match check
         if password != confirm_password:
             return render(request, 'accounts/student_register.html', {
                 'subjects': subjects,
                 'error': 'Passwords do not match'
             })
 
-        # ✅ Username exists check
+        # Username exists check
         if User.objects.filter(username=username).exists():
             return render(request, 'accounts/student_register.html', {
                 'subjects': subjects,
-                'error': 'Username already exists. Please choose another one.'
+                'error': 'Username already exists'
             })
 
-        # ✅ Create user
+        if not subject_ids:
+            return render(request, 'accounts/student_register.html', {
+                'subjects': subjects,
+                'error': 'Please select at least one subject'
+            })
+
+        # Create user
         user = User.objects.create_user(
             username=username,
             password=password,
             role='student'
         )
 
-        # ✅ Create student profile
-        student = Student.objects.create(user=user)
+        # Create student profile
+        student = Student.objects.create(
+            user=user,
+            class_code=class_code
+        )
 
-        # ✅ Assign subjects (ManyToMany)
+        # Assign subjects
         student.subjects.set(subject_ids)
 
         return redirect('login')
