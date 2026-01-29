@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-5 text-center">
+                    <!-- Role Badge -->
+                    <div class="mb-4">
+                        {% if user_type == 'teacher' %}
+                            <span class="badge bg-primary" style="font-size: 1.2rem; padding: 10px 20px; border-radius: 25px;">
+                                <i class="fas fa-chalkboard-teacher"></i> TEACHER
+                            </span>
+                        {% else %}
+                            <span class="badge bg-success" style="font-size: 1.2rem; padding: 10px 20px; border-radius: 25px;">
+                                <i class="fas fa-user-graduate"></i> STUDENT
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Profile Image -->
+                    <div class="mb-4">
+                        {% if profile.image %}
+                            <img src="{{ profile.image.url }}" alt="Profile" class="profile-img">
+                        {% else %}
+                            <img src="/media/default.jpg" alt="Profile" class="profile-img">
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Profile Name -->
+                    <h2 class="mb-4">{{ profile.name }}</h2>
+                    
+                    <!-- Profile Details -->
+                    <div class="profile-details mt-4">
+                        {% if user_type == 'teacher' %}
+                            <!-- Teacher ID -->
+                            <div class="detail-row mb-3 p-3 bg-light rounded">
+                                <i class="fas fa-id-badge text-primary me-2"></i>
+                                <strong>Teacher ID:</strong> {{ profile.teacher_id }}
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="detail-row mb-3 p-3 bg-light rounded">
+                                <i class="fas fa-envelope text-primary me-2"></i>
+                                <strong>Email:</strong> {{ profile.user.email }}
+                            </div>
+                            
+                            <!-- Mobile -->
+                            <div class="detail-row mb-3 p-3 bg-light rounded">
+                                <i class="fas fa-phone text-primary me-2"></i>
+                                <strong>Mobile:</strong> {{ profile.mobile }}
+                            </div>
+                            
+                            <!-- Classes -->
+                            <div class="detail-row mb-3 p-3 bg-light rounded">
+                                <i class="fas fa-school text-primary me-2"></i>
+                                <strong>Classes Allotted:</strong> 
+                                {% for class in classes %}
+                                    Class {{ class }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Subjects -->
+                            <div class="detail-row mb-3 p-3 bg-light rounded">
+                                <i class="fas fa-book text-primary me-2"></i>
+                                <strong>Subjects Allotted:</strong>
+                                <div class="mt-2">
+                                    {% for subject in subjects %}
+                                        <span class="badge bg-primary me-2 mb-2" style="font-size: 0.9rem; padding: 8px 15px;">
+                                            {{ subject.name }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                        {% else %}
+                            <!-- Student ID -->
+                            <div class="detail-row mb-3 p-3 bg-light rounded">
+                                <i class="fas fa-id-badge text-success me-2"></i>
+                                <strong>Student ID:</strong> {{ profile.student_id }}
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="detail-row mb-3 p-3 bg-light rounded">
+                                <i class="fas fa-envelope text-success me-2"></i>
+                                <strong>Email:</strong> {{ profile.user.email }}
+                            </div>
+                            
+                            <!-- Mobile -->
+                            <div class="detail-row mb-3 p-3 bg-light rounded">
+                                <i class="fas fa-phone text-success me-2"></i>
+                                <strong>Mobile:</strong> {{ profile.mobile }}
+                            </div>
+                            
+                            <!-- Class -->
+                            <div class="detail-row mb-3 p-3 bg-light rounded">
+                                <i class="fas fa-school text-success me-2"></i>
+                                <strong>Class:</strong> Class {{ profile.class_name }}th
+                            </div>
+                            
+                            <!-- Subjects -->
+                            <div class="detail-row mb-3 p-3 bg-light rounded">
+                                <i class="fas fa-book text-success me-2"></i>
+                                <strong>Subjects Registered:</strong>
+                                <div class="mt-2">
+                                    {% for subject in subjects %}
+                                        <span class="badge bg-success me-2 mb-2" style="font-size: 0.9rem; padding: 8px 15px;">
+                                            {{ subject.name }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .detail-row {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+    
+    .detail-row strong {
+        color: #333;
+    }
+    
+    .profile-details {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}

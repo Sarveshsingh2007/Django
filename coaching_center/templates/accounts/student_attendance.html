@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}My Attendance{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-11">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-clipboard-check"></i> My Attendance</h3>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Overall Attendance -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h4 class="mb-3">Overall Attendance</h4>
+                                    <div class="progress" style="height: 30px;">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {{ overall_percentage }}%;" 
+                                             aria-valuenow="{{ overall_percentage }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            {{ overall_percentage }}%
+                                        </div>
+                                    </div>
+                                    <p class="mt-3 mb-0">
+                                        <strong>{{ present_classes }}</strong> present out of <strong>{{ total_classes }}</strong> classes
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subject-wise Attendance -->
+                    <h5 class="mb-3"><i class="fas fa-book"></i> Subject-wise Attendance</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Teacher</th>
+                                    <th>Attendance</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in attendance_data %}
+                                    <tr>
+                                        <td>{{ data.subject.name }}</td>
+                                        <td>
+                                            {% if data.teacher %}
+                                                {{ data.teacher.name }}
+                                            {% else %}
+                                                <span class="text-muted">Not assigned</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 25px; width: 200px;">
+                                                <div class="progress-bar 
+                                                    {% if data.percentage >= 75 %}bg-success
+                                                    {% elif data.percentage >= 50 %}bg-warning
+                                                    {% else %}bg-danger{% endif %}" 
+                                                    role="progressbar" 
+                                                    style="width: {{ data.percentage }}%;">
+                                                    {{ data.percentage }}%
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">{{ data.present }}/{{ data.total }} classes</small>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" 
+                                                    type="button" 
+                                                    data-bs-toggle="collapse" 
+                                                    data-bs-target="#details_{{ data.subject.id }}">
+                                                <i class="fas fa-eye"></i> Show Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="collapse" id="details_{{ data.subject.id }}">
+                                        <td colspan="4">
+                                            <div class="p-3 bg-light">
+                                                <h6><strong>Attendance Details - {{ data.subject.name }}</strong></h6>
+                                                {% if data.details %}
+                                                    <div class="table-responsive">
+                                                        <table class="table table-sm table-bordered mb-0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Date</th>
+                                                                    <th>Day</th>
+                                                                    <th>Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for att in data.details %}
+                                                                    <tr>
+                                                                        <td>{{ att.date }}</td>
+                                                                        <td>{{ att.date|date:"l" }}</td>
+                                                                        <td>
+                                                                            {% if att.is_present %}
+                                                                                <span class="badge bg-success">Present</span>
+                                                                            {% else %}
+                                                                                <span class="badge bg-danger">Absent</span>
+                                                                            {% endif %}
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                {% else %}
+                                                    <p class="text-muted mb-0">No attendance records yet.</p>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

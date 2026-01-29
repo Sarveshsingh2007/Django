@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Mark Attendance{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-clipboard-check"></i> Mark Attendance</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" action="{% url 'show_students' %}">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Date -->
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Select Date</label>
+                                {{ form.date }}
+                            </div>
+                            
+                            <!-- Class -->
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Select Class</label>
+                                {{ form.class_name }}
+                            </div>
+                            
+                            <!-- Subject -->
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Select Subject</label>
+                                {{ form.subject }}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-users"></i> Show Students
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Instructions Card -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-info-circle text-info"></i> Instructions</h5>
+                    <ul class="mb-0">
+                        <li>Select the date, class, and subject to view students</li>
+                        <li>Mark attendance by checking the checkbox for present students</li>
+                        <li>You can edit attendance within 24 hours of marking</li>
+                        <li>After 24 hours, attendance cannot be modified</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

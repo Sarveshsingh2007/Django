@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Teacher Registration{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-chalkboard-teacher"></i> Teacher Registration
+                    </h2>
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Profile Image -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Profile Image</label>
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                                <div class="text-danger">{{ form.image.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Full Name</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Username</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email Address</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Mobile -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mobile Number</label>
+                            {{ form.mobile }}
+                            {% if form.mobile.errors %}
+                                <div class="text-danger">{{ form.mobile.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Classes -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Classes to Teach</label>
+                            <div class="ms-3">
+                                {% for choice in form.classes %}
+                                    <div class="form-check">
+                                        {{ choice }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.classes.errors %}
+                                <div class="text-danger">{{ form.classes.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Subjects -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Subjects to Teach</label>
+                            <div class="ms-3">
+                                {% for subject in form.subjects %}
+                                    <div class="form-check">
+                                        {{ subject }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.subjects.errors %}
+                                <div class="text-danger">{{ form.subjects.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Password</label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="text-danger">{{ form.password1.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Confirm Password -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Re-enter Password</label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="text-danger">{{ form.password2.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus"></i> Register
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <p class="text-center mb-0">
+                        Already have an account? 
+                        <a href="{% url 'login_choice' %}" class="text-decoration-none fw-bold">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

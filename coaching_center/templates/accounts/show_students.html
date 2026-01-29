@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+<!-- Custom template filter -->
+{% load custom_filters %}
+{% block title %}Mark Attendance{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-clipboard-check"></i> Mark Attendance</h3>
+                    <p class="mb-0 mt-2">
+                        Date: <strong>{{ date }}</strong> | 
+                        Class: <strong>{{ class_name }}th</strong> | 
+                        Subject: <strong>{{ subject.name }}</strong>
+                    </p>
+                </div>
+                <div class="card-body p-0">
+                    {% if students %}
+                        <form method="post" action="{% url 'submit_attendance' %}">
+                            {% csrf_token %}
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Student Name</th>
+                                            <th class="text-center">Mark Attendance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for student in students %}
+                                            <tr>
+                                                <td>{{ student.student_id }}</td>
+                                                <td>{{ student.name }}</td>
+                                                <td class="text-center">
+                                                    {% if student.id in existing_attendance %}
+                                                        {% if existing_attendance|get_item:student.id|get_item:'can_edit' %}
+                                                            <input type="checkbox" 
+                                                                   name="attendance_{{ student.id }}" 
+                                                                   class="form-check-input" 
+                                                                   style="width: 20px; height: 20px;"
+                                                                   {% if existing_attendance|get_item:student.id|get_item:'is_present' %}checked{% endif %}>
+                                                            <small class="text-muted d-block">Can edit</small>
+                                                        {% else %}
+                                                            {% if existing_attendance|get_item:student.id|get_item:'is_present' %}
+                                                                <span class="badge bg-success">Present</span>
+                                                            {% else %}
+                                                                <span class="badge bg-danger">Absent</span>
+                                                            {% endif %}
+                                                            <small class="text-danger d-block">Cannot edit (24h passed)</small>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <input type="checkbox" 
+                                                               name="attendance_{{ student.id }}" 
+                                                               class="form-check-input" 
+                                                               style="width: 20px; height: 20px;">
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="card-footer bg-light p-3">
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="fas fa-check"></i> Submit Attendance
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="p-5 text-center">
+                            <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
+                            <h4>No Students Found</h4>
+                            <p class="text-muted">No students are registered for this class and subject.</p>
+                            <a href="{% url 'attendance' %}" class="btn btn-primary">Go Back</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

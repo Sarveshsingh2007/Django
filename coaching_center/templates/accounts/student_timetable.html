@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title %}My Timetable{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-11">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-calendar-alt"></i> My Time Table</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 150px;">Day / Time</th>
+                                    {% for time in times %}
+                                        <th class="text-center">{{ time }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for day in days %}
+                                    <tr>
+                                        <td class="fw-bold bg-light">{{ day }}</td>
+                                        {% for time in times %}
+                                            <td class="text-center">
+                                                {% with entry=schedule|get_item:day|get_item:time %}
+                                                    {% if entry %}
+                                                        <div class="p-3 rounded" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                                                            <div class="fw-bold mb-1">
+                                                                <i class="fas fa-book"></i> {{ entry.subject.name }}
+                                                            </div>
+                                                            <small>
+                                                                <i class="fas fa-chalkboard-teacher"></i> {{ entry.teacher.name }}
+                                                            </small>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="text-muted p-3">
+                                                            <i class="fas fa-minus"></i> No Class
+                                                        </div>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h6 class="mb-3"><i class="fas fa-info-circle text-info"></i> Important Notes:</h6>
+                            <ul class="mb-0">
+                                <li>Classes are conducted from Monday to Friday</li>
+                                <li>Each class duration is 1 hour</li>
+                                <li>Be present 5 minutes before class starts</li>
+                                <li>Carry all necessary study materials</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
