@@ -112,8 +112,14 @@ class Attendance(models.Model):
 
 
 class Notes(models.Model):
+    CLASS_CHOICES = (
+        ('11', 'Class 11th'),
+        ('12', 'Class 12th'),
+    )
+    
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='notes')
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    class_name = models.CharField(max_length=2, choices=CLASS_CHOICES)  # Add this line
     topic = models.CharField(max_length=200)
     file = models.FileField(upload_to='notes/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
@@ -123,8 +129,7 @@ class Notes(models.Model):
         verbose_name_plural = 'Notes'
     
     def __str__(self):
-        return f"{self.subject.name} - {self.topic}"
-
+        return f"{self.subject.name} - {self.topic} - Class {self.class_name}"
 
 class Fee(models.Model):
     MONTH_CHOICES = (
