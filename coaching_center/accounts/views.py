@@ -215,18 +215,34 @@ def show_students(request):
     if request.method == 'POST':
         teacher = request.user.teacher_profile
         date = request.POST.get('date')
+        time_slot = request.POST.get('time_slot')
         class_name = request.POST.get('class_name')
         subject_id = request.POST.get('subject')
         
+        subject = get_object_or_404(Subject, id=subject_id)
+        
+        # Check if teacher has a class at this time
+        timetable_entry = TimeTable.objects.filter(
+            teacher=teacher,
+            day=datetime.strptime(date, '%Y-%m-%d').strftime('%A'),
+            time_slot=time_slot,
+            class_name=class_name,
+            subject=subject
+        ).first()
+        
+        if not timetable_entry:
+            messages.error(request, f'You do not have a class scheduled for {time_slot} on this day. Please check your timetable.')
+            return redirect('attendance')
+        
         # Store in session for submit
         request.session['attendance_date'] = date
+        request.session['attendance_time_slot'] = time_slot
         request.session['attendance_class'] = class_name
         request.session['attendance_subject'] = subject_id
         
-        subject = get_object_or_404(Subject, id=subject_id)
         students = Student.objects.filter(class_name=class_name, subjects=subject)
         
-        # Get existing attendance for this date
+        # Get existing attendance for this date and time
         existing_attendance = {}
         for student in students:
             att = Attendance.objects.filter(
@@ -244,13 +260,13 @@ def show_students(request):
         return render(request, 'accounts/show_students.html', {
             'students': students,
             'date': date,
+            'time_slot': time_slot,
             'class_name': class_name,
             'subject': subject,
             'existing_attendance': existing_attendance
         })
     
     return redirect('attendance')
-
 
 # Submit Attendance (Teacher)
 @login_required
@@ -262,6 +278,7 @@ def submit_attendance(request):
     if request.method == 'POST':
         teacher = request.user.teacher_profile
         date = request.session.get('attendance_date')
+        time_slot = request.session.get('attendance_time_slot')
         class_name = request.session.get('attendance_class')
         subject_id = request.session.get('attendance_subject')
         
@@ -285,11 +302,10 @@ def submit_attendance(request):
                     attendance.is_present = is_present
                     attendance.save()
         
-        messages.success(request, 'Attendance marked successfully!')
+        messages.success(request, f'Attendance marked successfully for {time_slot}!')
         return redirect('attendance')
     
     return redirect('attendance')
-
 
 # Edit Attendance (Teacher)
 @login_required
@@ -330,12 +346,16 @@ def notes_view(request):
     
     elif user.user_type == 'student':
         student = user.student_profile
-        notes = Notes.objects.filter(subject__in=student.subjects.all()).select_related('subject', 'teacher')
+        # Filter notes by student's class and subjects
+        notes = Notes.objects.filter(
+            subject__in=student.subjects.all(),
+            class_name=student.class_name
+        ).select_related('subject', 'teacher')
         
         return render(request, 'accounts/student_notes.html', {
             'notes': notes
         })
-
+    
 
 # Upload Notes (Teacher)
 @login_required
