@@ -170,8 +170,18 @@ class CaptchaLoginForm(forms.Form):
 
 
 class AttendanceForm(forms.Form):
+    TIME_CHOICES = [
+        ('3:30-4:30 PM', '3:30-4:30 PM'),
+        ('4:30-5:30 PM', '4:30-5:30 PM'),
+    ]
+    
     date = forms.DateField(
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        required=True
+    )
+    time_slot = forms.ChoiceField(
+        choices=TIME_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
         required=True
     )
     class_name = forms.ChoiceField(
@@ -194,13 +204,13 @@ class AttendanceForm(forms.Form):
             # Get teacher's subjects
             self.fields['subject'].queryset = teacher.subjects.all()
 
-
 class NotesUploadForm(forms.ModelForm):
     class Meta:
         model = Notes
-        fields = ['subject', 'topic', 'file']
+        fields = ['subject', 'class_name', 'topic', 'file']
         widgets = {
             'subject': forms.Select(attrs={'class': 'form-control'}),
+            'class_name': forms.Select(attrs={'class': 'form-control'}),
             'topic': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Topic Name'}),
             'file': forms.FileInput(attrs={'class': 'form-control'}),
         }
@@ -209,3 +219,7 @@ class NotesUploadForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if teacher:
             self.fields['subject'].queryset = teacher.subjects.all()
+            # Filter classes based on teacher's assigned classes
+            teacher_classes = teacher.classes.split(',')
+            class_choices = [(c, f'Class {c}th') for c in teacher_classes]
+            self.fields['class_name'].widget.choices = class_choices
