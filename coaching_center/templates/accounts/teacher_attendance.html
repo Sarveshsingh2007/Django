@@ -16,19 +16,25 @@
                         
                         <div class="row">
                             <!-- Date -->
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label class="form-label fw-bold">Select Date</label>
                                 {{ form.date }}
                             </div>
                             
+                            <!-- Time Slot -->
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-bold">Select Time</label>
+                                {{ form.time_slot }}
+                            </div>
+                            
                             <!-- Class -->
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label class="form-label fw-bold">Select Class</label>
                                 {{ form.class_name }}
                             </div>
                             
                             <!-- Subject -->
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label class="form-label fw-bold">Select Subject</label>
                                 {{ form.subject }}
                             </div>
@@ -48,7 +54,8 @@
                 <div class="card-body">
                     <h5 class="card-title"><i class="fas fa-info-circle text-info"></i> Instructions</h5>
                     <ul class="mb-0">
-                        <li>Select the date, class, and subject to view students</li>
+                        <li>Select the date, time slot, class, and subject to view students</li>
+                        <li>You can only mark attendance for classes in your timetable</li>
                         <li>Mark attendance by checking the checkbox for present students</li>
                         <li>You can edit attendance within 24 hours of marking</li>
                         <li>After 24 hours, attendance cannot be modified</li>
