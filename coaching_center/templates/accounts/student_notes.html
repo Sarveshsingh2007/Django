@@ -17,6 +17,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Subject</th>
+                                        <th>Class</th>
                                         <th>Topic</th>
                                         <th>Uploaded By</th>
                                         <th>Date</th>
@@ -29,6 +30,7 @@
                                             <td>
                                                 <span class="badge bg-success">{{ note.subject.name }}</span>
                                             </td>
+                                            <td>Class {{ note.class_name }}th</td>
                                             <td>{{ note.topic }}</td>
                                             <td>{{ note.teacher.name }}</td>
                                             <td>{{ note.uploaded_at|date:"M d, Y" }}</td>
@@ -47,7 +49,7 @@
                         <div class="p-5 text-center">
                             <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
                             <h4>No Notes Available</h4>
-                            <p class="text-muted">Your teachers haven't uploaded any notes yet.</p>
+                            <p class="text-muted">Your teachers haven't uploaded any notes for your class yet.</p>
                         </div>
                     {% endif %}
                 </div>
