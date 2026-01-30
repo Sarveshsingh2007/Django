@@ -16,17 +16,22 @@
                         {% csrf_token %}
                         
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label class="form-label fw-bold">Subject</label>
                                 {{ form.subject }}
                             </div>
                             
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-bold">Class</label>
+                                {{ form.class_name }}
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
                                 <label class="form-label fw-bold">Topic</label>
                                 {{ form.topic }}
                             </div>
                             
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label class="form-label fw-bold">File</label>
                                 {{ form.file }}
                             </div>
@@ -53,6 +58,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Subject</th>
+                                        <th>Class</th>
                                         <th>Topic</th>
                                         <th>Uploaded On</th>
                                         <th>Actions</th>
@@ -62,6 +68,7 @@
                                     {% for note in notes %}
                                         <tr>
                                             <td>{{ note.subject.name }}</td>
+                                            <td>Class {{ note.class_name }}th</td>
                                             <td>{{ note.topic }}</td>
                                             <td>{{ note.uploaded_at|date:"M d, Y" }}</td>
                                             <td>
