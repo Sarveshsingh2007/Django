@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'accounts',
+    'chatbot', 
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,7 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = 'login_choice'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'register'
+
+
+# Anthropic API Configuration
+ANTHROPIC_API_KEY = 'anthropic-api-key' 
