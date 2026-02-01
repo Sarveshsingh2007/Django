@@ -14,8 +14,11 @@ from .forms import (
 )
 from .models import Teacher, Student, Attendance, Notes, Fee, TimeTable, Subject
 import random
+import json
 import string
 from django.db.models import Count, Q
+from .models import Message, MessageReply
+from .forms import MessageForm, MessageReplyForm
 
 
 # Helper function to generate CAPTCHA
@@ -475,3 +478,141 @@ def timetable_view(request):
             'days': days,
             'times': times
         })
+    
+
+# Student: Send Message to Teacher
+@login_required
+def send_message(request):
+    if request.user.user_type != 'student':
+        messages.error(request, 'Only students can send messages.')
+        return redirect('home')
+    
+    student = request.user.student_profile
+    
+    if request.method == 'POST':
+        form = MessageForm(student=student, data=request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.student = student
+            message.save()
+            messages.success(request, f'Message sent successfully to {message.teacher.name}!')
+            return redirect('inbox')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = MessageForm(student=student)
+    
+    # Create teacher-subjects mapping for JavaScript
+    student_subjects = student.subjects.all()
+    teacher_ids = TimeTable.objects.filter(
+        class_name=student.class_name,
+        subject__in=student_subjects
+    ).values_list('teacher_id', flat=True).distinct()
+    
+    teachers = Teacher.objects.filter(id__in=teacher_ids)
+    
+    # Build dictionary: teacher_id -> list of subjects they teach (that student is enrolled in)
+    teacher_subjects_map = {}
+    for teacher in teachers:
+        # Get subjects this teacher teaches that the student is also enrolled in
+        common_subjects = teacher.subjects.filter(id__in=student_subjects.values_list('id', flat=True))
+        teacher_subjects_map[teacher.id] = [
+            {'id': subject.id, 'name': subject.name}
+            for subject in common_subjects
+        ]
+    
+    
+    teacher_subjects_json = json.dumps(teacher_subjects_map)
+    
+    return render(request, 'accounts/send_message.html', {
+        'form': form,
+        'teacher_subjects_json': teacher_subjects_json
+    })
+
+# Student: View Sent Messages and Replies (Inbox)
+@login_required
+def inbox(request):
+    user = request.user
+    
+    if user.user_type == 'student':
+        student = user.student_profile
+        sent_messages = Message.objects.filter(student=student).select_related('teacher', 'subject')
+        
+        return render(request, 'accounts/student_inbox.html', {
+            'messages': sent_messages
+        })
+    
+    elif user.user_type == 'teacher':
+        teacher = user.teacher_profile
+        received_messages = Message.objects.filter(teacher=teacher).select_related('student', 'subject')
+        
+        # Count unread messages
+        unread_count = received_messages.filter(status='unread').count()
+        
+        return render(request, 'accounts/teacher_inbox.html', {
+            'messages': received_messages,
+            'unread_count': unread_count
+        })
+
+
+# View Message Thread (Both Student and Teacher)
+@login_required
+def view_message(request, message_id):
+    message_obj = get_object_or_404(Message, id=message_id)
+    user = request.user
+    
+    # Check access permissions
+    if user.user_type == 'student':
+        if message_obj.student != user.student_profile:
+            messages.error(request, 'You do not have permission to view this message.')
+            return redirect('inbox')
+    elif user.user_type == 'teacher':
+        if message_obj.teacher != user.teacher_profile:
+            messages.error(request, 'You do not have permission to view this message.')
+            return redirect('inbox')
+        # Mark as read when teacher views
+        if message_obj.status == 'unread':
+            message_obj.status = 'read'
+            message_obj.save()
+    
+    # Get all replies
+    replies = message_obj.replies.all()
+    
+    # Handle reply submission
+    if request.method == 'POST':
+        form = MessageReplyForm(request.POST)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.message = message_obj
+            reply.sender_type = user.user_type
+            reply.save()
+            
+            # Update message status
+            if user.user_type == 'teacher':
+                message_obj.status = 'replied'
+                message_obj.save()
+            
+            messages.success(request, 'Reply sent successfully!')
+            return redirect('view_message', message_id=message_id)
+    else:
+        form = MessageReplyForm()
+    
+    return render(request, 'accounts/view_message.html', {
+        'message': message_obj,
+        'replies': replies,
+        'form': form
+    })
+
+
+# Teacher: Delete Message
+@login_required
+def delete_message(request, message_id):
+    if request.user.user_type != 'teacher':
+        messages.error(request, 'Only teachers can delete messages.')
+        return redirect('home')
+    
+    message_obj = get_object_or_404(Message, id=message_id, teacher=request.user.teacher_profile)
+    message_obj.delete()
+    messages.success(request, 'Message deleted successfully!')
+    
+    return redirect('inbox')    
