@@ -31,4 +31,10 @@ urlpatterns = [
     
     # Timetable URLs
     path('timetable/', views.timetable_view, name='timetable'),
+
+    # Messaging URLs
+    path('messages/send/', views.send_message, name='send_message'),
+    path('messages/inbox/', views.inbox, name='inbox'),
+    path('messages/view/<int:message_id>/', views.view_message, name='view_message'),
+    path('messages/delete/<int:message_id>/', views.delete_message, name='delete_message'),
 ]
