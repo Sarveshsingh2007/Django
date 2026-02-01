@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Send Message{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-paper-plane"></i> Send Message to Teacher</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" id="messageForm">
+                        {% csrf_token %}
+                        
+                        <!-- Teacher Selection -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ form.teacher.label }}</label>
+                            {{ form.teacher }}
+                            {% if form.teacher.errors %}
+                                <div class="text-danger">{{ form.teacher.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">Only teachers teaching your subjects are shown</small>
+                        </div>
+                        
+                        <!-- Subject Selection -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ form.subject.label }}</label>
+                            <select name="subject" id="id_subject" class="form-control" required>
+                                <option value="">---------</option>
+                            </select>
+                            {% if form.subject.errors %}
+                                <div class="text-danger">{{ form.subject.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted" id="subject-hint">Select a teacher first to see their subjects</small>
+                        </div>
+                        
+                        <!-- Message Subject -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ form.message_subject.label }}</label>
+                            {{ form.message_subject }}
+                            {% if form.message_subject.errors %}
+                                <div class="text-danger">{{ form.message_subject.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Message Text -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ form.message_text.label }}</label>
+                            {{ form.message_text }}
+                            {% if form.message_text.errors %}
+                                <div class="text-danger">{{ form.message_text.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane"></i> Send Message
+                            </button>
+                            <a href="{% url 'inbox' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Inbox
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tips Card -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-lightbulb text-warning"></i> Tips for Effective Messages</h5>
+                    <ul class="mb-0">
+                        <li>Be clear and specific about your doubt</li>
+                        <li>Mention the chapter/topic name</li>
+                        <li>Include relevant details (page number, question number, etc.)</li>
+                        <li>Be respectful and polite</li>
+                        <li>Check your inbox regularly for replies</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Teacher-Subject mapping data
+    const teacherSubjects = {{ teacher_subjects_json|safe }};
+    
+    // Get elements
+    const teacherSelect = document.getElementById('id_teacher');
+    const subjectSelect = document.getElementById('id_subject');
+    const subjectHint = document.getElementById('subject-hint');
+    
+    // Function to update subjects based on selected teacher
+    function updateSubjects() {
+        const teacherId = teacherSelect.value;
+        
+        // Clear current options
+        subjectSelect.innerHTML = '<option value="">---------</option>';
+        
+        if (teacherId && teacherSubjects[teacherId]) {
+            // Add subjects for selected teacher
+            teacherSubjects[teacherId].forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.id;
+                option.textContent = subject.name;
+                subjectSelect.appendChild(option);
+            });
+            
+            subjectHint.textContent = `Showing subjects taught by selected teacher`;
+            subjectHint.classList.remove('text-muted');
+            subjectHint.classList.add('text-success');
+        } else {
+            subjectHint.textContent = 'Select a teacher first to see their subjects';
+            subjectHint.classList.remove('text-success');
+            subjectHint.classList.add('text-muted');
+        }
+    }
+    
+    // Add event listener to teacher select
+    teacherSelect.addEventListener('change', updateSubjects);
+    
+    // Initialize on page load
+    updateSubjects();
+</script>
+{% endblock %}
