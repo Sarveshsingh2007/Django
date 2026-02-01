@@ -194,3 +194,40 @@ class TimeTable(models.Model):
     
     def __str__(self):
         return f"{self.day} {self.time_slot} - Class {self.class_name} - {self.subject.name}"
+    
+class Message(models.Model):
+    STATUS_CHOICES = (
+        ('unread', 'Unread'),
+        ('read', 'Read'),
+        ('replied', 'Replied'),
+    )
+    
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='sent_messages')
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='received_messages')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    message_subject = models.CharField(max_length=200)
+    message_text = models.TextField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='unread')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.student.name} → {self.teacher.name} - {self.message_subject}"
+
+
+class MessageReply(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='replies')
+    sender_type = models.CharField(max_length=10)  # 'student' or 'teacher'
+    reply_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = 'Message Reply'
+        verbose_name_plural = 'Message Replies'
+    
+    def __str__(self):
+        return f"Reply to: {self.message.message_subject} at {self.created_at}"
