@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Teacher, Student, Subject, Attendance, Notes, Fee, TimeTable
+from .models import User, Teacher, Student, Subject, Attendance, Notes, Fee, TimeTable, Message, MessageReply
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
@@ -69,3 +69,21 @@ class TimeTableAdmin(admin.ModelAdmin):
     list_display = ['day', 'time_slot', 'class_name', 'subject', 'teacher']
     list_filter = ['day', 'class_name', 'time_slot']
     search_fields = ['subject__name', 'teacher__name']
+
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ['student', 'teacher', 'subject', 'message_subject', 'status', 'created_at']
+    list_filter = ['status', 'subject', 'created_at']
+    search_fields = ['student__name', 'teacher__name', 'message_subject', 'message_text']
+    readonly_fields = ['created_at', 'updated_at']
+    date_hierarchy = 'created_at'
+
+
+@admin.register(MessageReply)
+class MessageReplyAdmin(admin.ModelAdmin):
+    list_display = ['message', 'sender_type', 'created_at']
+    list_filter = ['sender_type', 'created_at']
+    search_fields = ['reply_text', 'message__message_subject']
+    readonly_fields = ['created_at']
+    date_hierarchy = 'created_at'
