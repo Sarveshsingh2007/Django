@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Teacher, Student, Subject, Attendance, Notes
+from .models import User, Teacher, Student, Subject, Attendance, Notes, TimeTable, Message, MessageReply
 from django.core.exceptions import ValidationError
 import random
 import string
@@ -223,3 +223,58 @@ class NotesUploadForm(forms.ModelForm):
             teacher_classes = teacher.classes.split(',')
             class_choices = [(c, f'Class {c}th') for c in teacher_classes]
             self.fields['class_name'].widget.choices = class_choices
+
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['teacher', 'subject', 'message_subject', 'message_text']
+        widgets = {
+            'teacher': forms.Select(attrs={'class': 'form-control'}),
+            'subject': forms.Select(attrs={'class': 'form-control'}),
+            'message_subject': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter message subject (e.g., Doubt in Newton\'s Laws)'
+            }),
+            'message_text': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 5,
+                'placeholder': 'Write your question or doubt here...'
+            }),
+        }
+        labels = {
+            'teacher': 'Select Teacher',
+            'subject': 'Select Subject',
+            'message_subject': 'Subject',
+            'message_text': 'Your Message/Doubt',
+        }
+    
+    def __init__(self, student=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if student:
+            # Get only teachers who teach subjects that the student is learning
+            student_subjects = student.subjects.all()
+            # Get teachers who teach at least one of student's subjects
+            teacher_ids = TimeTable.objects.filter(
+                class_name=student.class_name,
+                subject__in=student_subjects
+            ).values_list('teacher_id', flat=True).distinct()
+            
+            self.fields['teacher'].queryset = Teacher.objects.filter(id__in=teacher_ids)
+            self.fields['subject'].queryset = student_subjects
+
+
+class MessageReplyForm(forms.ModelForm):
+    class Meta:
+        model = MessageReply
+        fields = ['reply_text']
+        widgets = {
+            'reply_text': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Write your reply here...'
+            }),
+        }
+        labels = {
+            'reply_text': 'Your Reply',
+        }
