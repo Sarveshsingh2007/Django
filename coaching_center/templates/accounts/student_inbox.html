@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}My Messages{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-11">
+            <div class="card">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="fas fa-inbox"></i> My Messages</h3>
+                    <a href="{% url 'send_message' %}" class="btn btn-light">
+                        <i class="fas fa-plus"></i> New Message
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    {% if messages %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 15%;">Teacher</th>
+                                        <th style="width: 12%;">Subject</th>
+                                        <th style="width: 25%;">Message Subject</th>
+                                        <th style="width: 30%;">Message Preview</th>
+                                        <th style="width: 10%;">Status</th>
+                                        <th style="width: 8%;">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for msg in messages %}
+                                        <tr style="cursor: pointer;" onclick="window.location='{% url 'view_message' msg.id %}'">
+                                            <td>
+                                                <strong>{{ msg.teacher.name }}</strong><br>
+                                                <small class="text-muted">{{ msg.teacher.teacher_id }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary">{{ msg.subject.name }}</span>
+                                            </td>
+                                            <td><strong>{{ msg.message_subject }}</strong></td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    {{ msg.message_text|truncatewords:10 }}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                {% if msg.status == 'unread' %}
+                                                    <span class="badge bg-secondary">Sent</span>
+                                                {% elif msg.status == 'read' %}
+                                                    <span class="badge bg-info">Read</span>
+                                                {% else %}
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check-double"></i> Replied
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <small>{{ msg.created_at|date:"M d, Y" }}</small>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="p-5 text-center">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <h4>No Messages Yet</h4>
+                            <p class="text-muted">You haven't sent any messages to your teachers.</p>
+                            <a href="{% url 'send_message' %}" class="btn btn-success btn-lg">
+                                <i class="fas fa-paper-plane"></i> Send Your First Message
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Help Card -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6><i class="fas fa-info-circle text-info"></i> Message Status Guide:</h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <span class="badge bg-secondary">Sent</span> - Teacher hasn't read yet
+                        </div>
+                        <div class="col-md-4">
+                            <span class="badge bg-info">Read</span> - Teacher has read your message
+                        </div>
+                        <div class="col-md-4">
+                            <span class="badge bg-success"><i class="fas fa-check-double"></i> Replied</span> - Teacher has replied
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
