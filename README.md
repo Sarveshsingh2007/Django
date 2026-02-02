@@ -41,11 +41,6 @@ Django (Python) | HTML5 | CSS3 | Bootstrap 5 | JavaScript | SQLite | AI Chatbot
 
 This project demonstrates my ability to build enterprise-level applications that solve real business problems.
 
-### 📸 Screenshots
-![Dashboard](screenshots/dashboard.png)
-![Timetable](screenshots/timetable.png)
-![Attendance](screenshots/attendance.png)
-
 ---
 
 ## 📌 About This Repository
@@ -116,5 +111,3 @@ This project demonstrates my ability to build enterprise-level applications that
 **Email**: sarveshsingh9381@gmail.com
 
 ---
-
-⭐ If you find this helpful, please give it a star!
