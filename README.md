@@ -6,6 +6,48 @@ I already have experience with **Python and Flask**, and this repo represents my
 
 ---
 
+## 🎓 Featured Project: Excellence Coaching Center Management System
+
+A **Full-Stack Web Application** that digitizes coaching center operations and solves real-world challenges in the education sector.
+
+### 🔧 Tech Stack
+Django (Python) | HTML5 | CSS3 | Bootstrap 5 | JavaScript | SQLite | AI Chatbot
+
+### ✨ Key Features
+
+**📊 Role-Based Access Control**
+- Separate dashboards for Students, Teachers & Admins
+- Secure authentication with CAPTCHA
+
+**📚 Core Functionality**
+- Dynamic timetable with conflict prevention
+- Smart attendance tracking (24-hour edit window)
+- Notes management with class-based filtering
+- Real-time student-teacher messaging
+- AI-powered 24/7 chatbot assistance
+- Fee management & performance analytics
+
+### 🎯 Technical Highlights
+- 12+ interconnected database models
+- Responsive UI/UX for mobile & desktop
+- Dynamic form filtering based on user context
+- Advanced Django ORM with complex relationships
+- Security best practices (CSRF, authentication, authorization)
+
+### 💼 Real-World Impact
+✓ Reduces administrative overhead  
+✓ Improves communication transparency  
+✓ Enables data-driven decision making
+
+This project demonstrates my ability to build enterprise-level applications that solve real business problems.
+
+### 📸 Screenshots
+![Dashboard](screenshots/dashboard.png)
+![Timetable](screenshots/timetable.png)
+![Attendance](screenshots/attendance.png)
+
+---
+
 ## 📌 About This Repository
 
 - 📘 Learn Django from basics to advanced concepts
@@ -16,7 +58,7 @@ I already have experience with **Python and Flask**, and this repo represents my
 
 ---
 
-## 🧠 What I’m Learning
+## 🧠 What I'm Learning
 
 ### 🔹 Django Core
 - Django Project & App Structure
@@ -67,3 +109,12 @@ I already have experience with **Python and Flask**, and this repo represents my
 - Debug vs Production Settings
 
 ---
+
+## 🤝 Connect With Me
+
+**LinkedIn**: [linkedin.com/in/sarveshsingh-6a8a152a6](https://linkedin.com/in/sarveshsingh-6a8a152a6)  
+**Email**: sarveshsingh9381@gmail.com
+
+---
+
+⭐ If you find this helpful, please give it a star!
